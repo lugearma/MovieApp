@@ -20,7 +20,6 @@ protocol MoviesListViewModelProtocol: class {
   var delegate: MoviesListViewModelDelegate? { get set }
   var currentPage: Int { get set }
   var movieName: String { get set }
-  func loadMovies()
   func searchMovieByName(_ name: String)
   func presentMovieDetail(_ movie: Movie)
   func loadNextPage()
@@ -38,32 +37,18 @@ final class MoviesListViewModel: MoviesListViewModelProtocol {
     self.moviesData = moviesData
   }
   
-  func loadMovies() {
-    moviesData.moviesBy(name: "Batman", page: currentPage, completion: { [weak self] result in
-      switch result {
-      case .failure(let error):
-        self?.delegate?.didThrow(error: error)
-      case .success(let value):
-        self?.delegate?.didGetSearchResult(search: value)
-      }
-    })
-  }
-  
   func loadNextPage() {
     currentPage += 1
-    moviesData.moviesBy(name: movieName, page: currentPage, completion: { [weak self] result in
-      switch result {
-      case .failure(let error):
-        self?.delegate?.didThrow(error: error)
-      case .success(let value):
-        self?.delegate?.didGetSearchResult(search: value)
-      }
-    })
+    makeMovieRequest(name: movieName, page: currentPage)
   }
   
   func searchMovieByName(_ name: String) {
     movieName = name
-    moviesData.moviesBy(name: name, page: 1, completion: { [weak self] result in
+    makeMovieRequest(name: movieName, page: 1)
+  }
+  
+  private func makeMovieRequest(name: String, page: Int) {
+    moviesData.moviesBy(name: name, page: page, completion: { [weak self] result in
       switch result {
       case .failure(let error):
         self?.delegate?.didThrow(error: error)

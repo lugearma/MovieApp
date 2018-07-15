@@ -14,9 +14,9 @@ final class MoviesListController: UIViewController {
   lazy var moviesListView: MoviesListView = Bundle.main.loadNib()
   var movies = [Movie]()
   
-  var viewModel: MoviesListViewModelProtocol! {
+  var viewModel: MoviesListViewModelProtocol? {
     didSet {
-      viewModel.delegate = self
+      viewModel?.delegate = self
     }
   }
   
@@ -34,12 +34,8 @@ final class MoviesListController: UIViewController {
     moviesListView.constraintViewToFillTo(view: view)
   }
   
-  private func requestMovies() {
-    viewModel.loadMovies()
-  }
-  
-  func loadNextPage() {
-    viewModel.loadNextPage()
+  private func loadNextPage() {
+    viewModel?.loadNextPage()
   }
 }
 
@@ -73,7 +69,7 @@ extension MoviesListController: UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let movie = movies[indexPath.row]
-    viewModel.presentMovieDetail(movie)
+    viewModel?.presentMovieDetail(movie)
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -116,6 +112,6 @@ extension MoviesListController: UISearchBarDelegate {
     }
     movies.removeAll()
     moviesListView.updateTable()
-    viewModel.searchMovieByName(name)
+    viewModel?.searchMovieByName(name)
   }
 }
